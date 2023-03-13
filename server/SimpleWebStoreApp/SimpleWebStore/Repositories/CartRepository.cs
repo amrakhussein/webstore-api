@@ -12,7 +12,6 @@ internal static class CartRepository
     {
         using var db = new ApplicationDbContext();
 
-
         return await db.Carts
             .Include(c => c.Items)
             .ThenInclude(ci => ci.Product)
@@ -20,7 +19,7 @@ internal static class CartRepository
     }
 
 
-    internal async static Task<Cart> CheckoutOrderAsync(CartDto customerCart)
+    internal async static Task<Cart> PurchaseOrderAsync(CartDto customerCart)
     {
 
         if (customerCart == null)
@@ -32,33 +31,43 @@ internal static class CartRepository
         var MockedCustomer = db.Customers.FirstOrDefault(c => c.Id == mockUserId);
 
         // update cartItemsDto however many times were added by the user
-        var cartItems = customerCart.CartItems.Select(item => new CartItemsDto
+        var cartItemsDto = customerCart.CartItems.Select(item => new CartItemDto
         {
             Id = item.Id,
-            Name = item.Name,
             Price = item.Price,
             Quantity = item.Quantity
         }).ToList();
-        customerCart.CartItems = cartItems;
+        customerCart.CartItems = cartItemsDto;
 
         // create customer Order (Cart) updating the cart items ready for the database schema
         var cart = new Cart
         {
             CustomerId = mockUserId,
-            Items = customerCart.CartItems.Select(ci => new CartItem
+            Items = cartItemsDto.Select(ci => new CartItem
             {
                 ProductId = ci.Id,
-                CartId = MockedCustomer.Id,
                 Price = ci.Price,
                 Quantity = ci.Quantity,
             }).ToList(),
-            Total = cartItems.Sum(c => c.TotalPrice)
+            Total = cartItemsDto.Sum(c => c.TotalPrice)
         };
 
-        // update database with customer Order
-        db.Carts.Add(cart);
-        await db.SaveChangesAsync();
 
+        // Fetch the products from the database
+        var productIds = customerCart.CartItems.Select(ci => ci.Id).ToList();
+        var products = db.Products.Where(p => productIds.Contains(p.Id)).ToList();
+
+
+        // update products quantity
+        // TODO: handle proper user response
+        var quantitiyUpdated = await ProductRepository.UpdateProductsQuantityAsync(productIds, customerCart);
+
+        if (quantitiyUpdated.success)
+        {
+            // update database with customer Order
+            db.Carts.Add(cart);
+            await db.SaveChangesAsync();
+        }
         return cart;
     }
 }

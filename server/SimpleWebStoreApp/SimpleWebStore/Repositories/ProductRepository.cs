@@ -14,22 +14,6 @@ internal static class ProductRepository
         return await db.Products.ToListAsync();
     }
 
-    //internal async static Task<bool> UpdateProductsQuantityAsync(int productIds, CartDto customerCart)
-    //{
-    //    using var db = new ApplicationDbContext();
-    //   var products=  await db.Products.Where(p => productIds.Equals(productIds)).ToListAsync();
-
-    //    // update product quantities
-    //    products.Select(p =>
-    //    {
-    //        var cartItem = customerCart.CartItems.FirstOrDefault(ci => ci.Id == p.Id);
-    //        if (cartItem != null)
-    //        {
-    //            p.Quantity -= cartItem.Quantity;
-    //        }
-    //        return p;
-    //    }).ToList();
-    //}
     internal async static Task<(bool success, string message)> UpdateProductsQuantityAsync(IEnumerable<int> productIds, CartDto customerCart)
     {
         using var db = new ApplicationDbContext();

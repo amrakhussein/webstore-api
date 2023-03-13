@@ -3,6 +3,10 @@
 internal class CartDto
 {
     public int CustomerId { get; set; }
+    public decimal Total { get; set; }
 
-    public List<CartItemsDto> CartItems { get; set; } = null!;
+    public List<CartItemDto> CartItems { get; set; } = null!;
+    //public CartItemsDto CartItems { get; set; } = null!;
+
+
 }

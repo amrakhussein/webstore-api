@@ -33,14 +33,14 @@ app.MapGet("/products", async () =>
 
 
 
-app.MapPost("/checkout", async ([FromBody] CartDto customerCart) =>
+app.MapPost("/purchase", async ([FromBody] CartDto customerCart) =>
 {
-    var purchasedItems = await CartRepository.CheckoutOrderAsync(customerCart);
+    var purchasedItems = await CartRepository.PurchaseOrderAsync(customerCart);
 
 
     return purchasedItems != null ? Results.Ok(purchasedItems)
                                   : Results.BadRequest();
-}).WithTags("Checkout Endpoint");
+}).WithTags("Purchase Endpoint");
 
 
 // start bootstraping
