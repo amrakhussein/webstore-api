@@ -1,12 +1,8 @@
-﻿using SimpleWebStore.Models;
-
-namespace SimpleWebStore.DTOs;
+﻿namespace SimpleWebStore.DTOs;
 
 internal class CartDto
 {
-    public int Id { get; set; }
-    public DateTime CreateOn { get; set; }
+    public int CustomerId { get; set; }
 
-    public CustomerDto Customer { get; set; } = null!;
-    public IEnumerable<CartItem> cartItems { get; set; } = null!;
+    public List<CartItemsDto> CartItems { get; set; } = null!;
 }
