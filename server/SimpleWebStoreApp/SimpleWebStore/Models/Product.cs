@@ -7,5 +7,8 @@ internal sealed class Product
     public string? description { get; set; } = null!;
     public decimal Price { get; set; }
 
+    // quantity per unit defaulted with 50 for testing
+    public int Quantity { get; set; } = 50;
+
     public IEnumerable<CartItem> Items { get; set; } = null!;
 }
