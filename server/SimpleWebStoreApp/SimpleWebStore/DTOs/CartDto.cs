@@ -6,7 +6,4 @@ internal class CartDto
     public decimal Total { get; set; }
 
     public List<CartItemDto> CartItems { get; set; } = null!;
-    //public CartItemsDto CartItems { get; set; } = null!;
-
-
 }

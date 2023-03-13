@@ -14,6 +14,12 @@ internal static class ProductRepository
         return await db.Products.ToListAsync();
     }
 
+    internal async static Task<IEnumerable<Product>> GetProductsByIdAsync(int id)
+    {
+        using var db = new ApplicationDbContext();
+        return await db.Products.Where(p => p.Id == id).ToListAsync();
+    }
+
     internal async static Task<(bool success, string message)> UpdateProductsQuantityAsync(IEnumerable<int> productIds, CartDto customerCart)
     {
         using var db = new ApplicationDbContext();

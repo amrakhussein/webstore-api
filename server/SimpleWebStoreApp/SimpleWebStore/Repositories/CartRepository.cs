@@ -19,7 +19,7 @@ internal static class CartRepository
     }
 
 
-    internal async static Task<Cart> PurchaseOrderAsync(CartDto customerCart)
+    internal async static Task<CartDto> PurchaseOrderAsync(CartDto customerCart)
     {
 
         if (customerCart == null)
@@ -53,13 +53,9 @@ internal static class CartRepository
         };
 
 
-        // Fetch the products from the database
-        var productIds = customerCart.CartItems.Select(ci => ci.Id).ToList();
-        var products = db.Products.Where(p => productIds.Contains(p.Id)).ToList();
-
-
         // update products quantity
         // TODO: handle proper user response
+        var productIds = customerCart.CartItems.Select(ci => ci.Id).ToList();
         var quantitiyUpdated = await ProductRepository.UpdateProductsQuantityAsync(productIds, customerCart);
 
         if (quantitiyUpdated.success)
@@ -68,6 +64,6 @@ internal static class CartRepository
             db.Carts.Add(cart);
             await db.SaveChangesAsync();
         }
-        return cart;
+        return customerCart;
     }
 }
