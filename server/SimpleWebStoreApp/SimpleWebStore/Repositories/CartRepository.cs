@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 using SimpleWebStore.Data;
 using SimpleWebStore.DTOs;
@@ -21,42 +20,39 @@ internal static class CartRepository
     }
 
 
-    internal async static Task<Cart> CheckoutOrderAsync([FromBody] CartDto customerCart)
+    internal async static Task<Cart> CheckoutOrderAsync(CartDto customerCart)
     {
+
+        if (customerCart == null)
+            throw new ArgumentNullException(nameof(customerCart));
 
         // fetch user record from database
         using var db = new ApplicationDbContext();
         var mockUserId = 1;
         var MockedCustomer = db.Customers.FirstOrDefault(c => c.Id == mockUserId);
 
-        // intialize cartDto
-        var cartDto = new CartDto
-        {
-            CustomerId = mockUserId,
-            CartItems = new List<CartItemsDto>()
-        };
-
         // update cartItemsDto however many times were added by the user
-        var cartItems = cartDto.CartItems.Select(item => new CartItemsDto
+        var cartItems = customerCart.CartItems.Select(item => new CartItemsDto
         {
             Id = item.Id,
             Name = item.Name,
             Price = item.Price,
             Quantity = item.Quantity
         }).ToList();
-        cartDto.CartItems = cartItems;
+        customerCart.CartItems = cartItems;
 
         // create customer Order (Cart) updating the cart items ready for the database schema
         var cart = new Cart
         {
             CustomerId = mockUserId,
-            Items = cartDto.CartItems.Select(ci => new CartItem
+            Items = customerCart.CartItems.Select(ci => new CartItem
             {
                 ProductId = ci.Id,
                 CartId = MockedCustomer.Id,
                 Price = ci.Price,
                 Quantity = ci.Quantity,
             }).ToList(),
+            Total = cartItems.Sum(c => c.TotalPrice)
         };
 
         // update database with customer Order

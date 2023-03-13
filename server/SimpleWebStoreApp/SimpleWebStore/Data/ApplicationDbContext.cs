@@ -13,7 +13,15 @@ internal sealed class ApplicationDbContext : DbContext
     public DbSet<Cart> Carts { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder option) =>
+    protected override void OnConfiguring(DbContextOptionsBuilder option)
+    {
         option.UseSqlServer("Data Source =.; Initial Catalog = SimpleWebStoreDatabase; Integrated Security = True; TrustServerCertificate=true")
         .LogTo(log => Debug.WriteLine(log));
+    }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        // seed dummy data
+        builder.Seed();
+    }
 }

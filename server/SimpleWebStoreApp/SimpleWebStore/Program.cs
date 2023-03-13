@@ -1,3 +1,8 @@
+using Microsoft.AspNetCore.Mvc;
+
+using SimpleWebStore.DTOs;
+using SimpleWebStore.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -16,29 +21,27 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
 
-app.MapGet("/weatherforecast", () =>
+app.MapGet("/products", async () =>
 {
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+    var products = await ProductRepository.GetProductsAsync();
 
+    return products != null ? Results.Ok(products)
+                            : Results.BadRequest();
+
+}).WithTags("Products Endpoint");
+
+
+
+app.MapPost("/checkout", async ([FromBody] CartDto customerCart) =>
+{
+    var purchasedItems = await CartRepository.CheckoutOrderAsync(customerCart);
+
+
+    return purchasedItems != null ? Results.Ok(purchasedItems)
+                                  : Results.BadRequest();
+}).WithTags("Checkout Endpoint");
+
+
+// start bootstraping
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
