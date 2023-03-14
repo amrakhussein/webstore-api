@@ -26,7 +26,7 @@ app.MapGet("/products", async () =>
 {
     var products = await ProductRepository.GetProductsAsync();
 
-    return products != null ? Results.Ok(products)
+    return products is not null ? Results.Ok(products)
                             : Results.BadRequest();
 
 }).WithTags("Products Endpoint");
@@ -35,11 +35,25 @@ app.MapGet("/products", async () =>
 
 app.MapPost("/purchase", async ([FromBody] CartDto customerCart) =>
 {
+    if (customerCart is null)
+    {
+        return Results.BadRequest("Invalid request..");
+    }
+
     var purchasedItems = await CartRepository.PurchaseOrderAsync(customerCart);
 
 
-    return purchasedItems != null ? Results.Ok(purchasedItems)
-                                  : Results.BadRequest();
+    return purchasedItems.success
+        ? Results.Ok(new PurchasedItemResponseDto
+        {
+            Success = true,
+            Message = purchasedItems.message
+        })
+        : Results.BadRequest(new PurchasedItemResponseDto
+        {
+            Success = false,
+            Message = purchasedItems.message,
+        });
 }).WithTags("Purchase Endpoint");
 
 
