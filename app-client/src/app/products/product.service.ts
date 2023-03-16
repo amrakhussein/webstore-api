@@ -9,12 +9,14 @@ import { Product } from '../model/Product';
   providedIn: 'root',
 })
 export class ProductService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('test ', this.getAllProducts());
+  }
 
   baseUrl = environment.baseUrl;
 
-  getProducts(): Observable<Product> {
+  getAllProducts(): Observable<Product[]> {
     const url = `${this.baseUrl}/${ApiPaths.Products}`;
-    return this.http.get<Product>(url);
+    return this.http.get<Product[]>(url);
   }
 }
