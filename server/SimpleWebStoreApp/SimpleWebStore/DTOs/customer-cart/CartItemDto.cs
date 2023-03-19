@@ -1,4 +1,4 @@
-﻿namespace SimpleWebStore.DTOs;
+﻿namespace SimpleWebStore.DTOs.customerCart;
 
 internal class CartItemDto
 {

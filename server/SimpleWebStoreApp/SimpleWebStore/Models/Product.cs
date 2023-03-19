@@ -9,7 +9,8 @@ internal sealed class Product
     public string ImageSrc { get; set; } = null!;
 
     // quantity per unit defaulted with 50 for testing
-    public int Quantity { get; set; } = 50;
+    public int Quantity { get; set; } = 500;
+    public double AverageRatings { get; set; }
 
     public IEnumerable<CartItem> Items { get; set; } = null!;
     public IEnumerable<Rating> Ratings { get; set; } = null!;

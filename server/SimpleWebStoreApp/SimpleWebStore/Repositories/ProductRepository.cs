@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 using SimpleWebStore.Data;
-using SimpleWebStore.DTOs;
+using SimpleWebStore.DTOs.customerCart;
 using SimpleWebStore.Models;
 
 namespace SimpleWebStore.Repositories;
