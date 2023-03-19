@@ -59,14 +59,14 @@ internal static class CartRepository
 
 
         // update products quantity
-        var quantitiyUpdated = await ProductRepository.UpdateProductsQuantityAsync(productIds, customerCart);
+        var productUpdated = await ProductRepository.UpdateProductsQuantityAsync(productIds, customerCart);
 
-        if (quantitiyUpdated.success)
+        if (productUpdated.success)
         {
             // update database with customer Order
             db.Carts.Add(cart);
             await db.SaveChangesAsync();
         }
-        return quantitiyUpdated;
+        return productUpdated;
     }
 }

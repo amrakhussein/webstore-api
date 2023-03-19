@@ -5,6 +5,20 @@ using SimpleWebStore.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CORSPolicy",
+        builder =>
+        {
+            builder
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            //.WithOrigins("http://localhost:7282")
+            .AllowAnyOrigin();
+            //.AllowCredentials();
+        });
+});
+
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -20,6 +34,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// apply cors policy
+app.UseCors("CORSPolicy");
 
 
 app.MapGet("/products", async () =>

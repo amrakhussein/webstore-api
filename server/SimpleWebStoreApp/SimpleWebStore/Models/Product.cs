@@ -12,4 +12,5 @@ internal sealed class Product
     public int Quantity { get; set; } = 50;
 
     public IEnumerable<CartItem> Items { get; set; } = null!;
+    public IEnumerable<Rating> Ratings { get; set; } = null!;
 }
