@@ -19,7 +19,7 @@ export class CheckoutComponent {
     cartItems: [],
   };
 
-  purchaseProceededMsg!: string;
+  purchaseActionResponse!: string;
 
   constructor(
     private cartService: CartService,
@@ -46,7 +46,7 @@ export class CheckoutComponent {
         catchError((err) => {
           // if bad requeset (not sufficient quantity in products store), show related message
           if (err.status === 400) {
-            this.purchaseProceededMsg = err.error.message;
+            this.purchaseActionResponse = err.error.message;
             console.log(
               `Err occured during processing purchase details: ${err.error.message}`
             );
@@ -61,7 +61,7 @@ export class CheckoutComponent {
       .subscribe((res) => {
         if (res.success) {
           console.log('Checkout successful:', res.message);
-          this.purchaseProceededMsg = res.message;
+          this.purchaseActionResponse = res.message;
 
           // clear cart after successful purchase
           this.cartService.clearCart();

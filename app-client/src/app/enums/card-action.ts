@@ -1,4 +1,4 @@
-export enum CartQuantity {
+export enum CartAction {
     Increment = 'increment',
     Decrement = 'decrement',
   }

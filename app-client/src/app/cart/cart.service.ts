@@ -21,6 +21,8 @@ export class CartService {
 
   constructor(private productService: ProductService) {}
 
+  getCartItems = () => this.selectedCartItems$;
+
   getChosenProducts(): Observable<Product[]> {
     return this.productService
       .getAllProducts()
@@ -29,7 +31,7 @@ export class CartService {
           this.selectedCartItems$.pipe(
             map((selectedItems) =>
               products.filter((p) =>
-                selectedItems.some((selected) => selected.id == p.id)
+                selectedItems.some((selected) => selected.id === p.id)
               )
             )
           )
@@ -39,9 +41,7 @@ export class CartService {
 
   getChosenCartItemsById(id: number): Observable<Product | undefined> {
     return this.selectedCartItems$.pipe(
-      map((products) => {
-        return products.find((product) => product.id === id);
-      })
+      map((products) => products.find((product) => product.id === id))
     );
   }
 
@@ -68,8 +68,6 @@ export class CartService {
     );
   }
 
-  getCartItems = () => this.selectedCartItems$;
-
   addToCart(product: Product, quantity: number = 1) {
     if (!product) return;
 
@@ -94,7 +92,6 @@ export class CartService {
         quantity: productWithQuantity.quantity,
       });
     }
-
     this.selectedCartItems$.next(this.selectedCartItems);
   }
 

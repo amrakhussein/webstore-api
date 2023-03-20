@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { take } from 'rxjs/operators';
 import { ApiPaths } from '../enums/api-paths';
-import { CartQuantity } from '../enums/card-quantity';
+import { CartAction } from '../enums/card-action';
 import { CartedItem } from '../model/CartedItem';
 import { Product } from '../model/Product';
 import { CartService } from './cart.service';
@@ -21,30 +21,30 @@ export class CartComponent {
   // add to card incrementing quantity by 1
   // notify updateCart func with increment type
   incrementQuantity = (item: CartedItem) =>
-    this.quantity++ && this.updateCart(item, CartQuantity.Increment);
+    this.quantity++ && this.updateCart(item, CartAction.Increment);
 
   // decrement item quantity from card
   // notify updateCart func with increment type
   decrementQuantity = (item: CartedItem) =>
-    this.updateCart(item, CartQuantity.Decrement);
+    this.updateCart(item, CartAction.Decrement);
 
-  updateCart(item: CartedItem, type: CartQuantity) {
+  updateCart(item: CartedItem, type: CartAction) {
     this.cartService
       .getChosenCartItemsById(item.id)
       .pipe(take(1))
       .subscribe((product) => {
         if (product) {
-          if (type === CartQuantity.Increment) {
+          if (type === CartAction.Increment) {
             this.cartService.addToCart(product, product.quantity + 1);
           }
-          if (type === CartQuantity.Decrement && product.quantity > 1) {
+          if (type === CartAction.Decrement && product.quantity > 1) {
             this.cartService.addToCart(product, product.quantity - 1);
           }
         }
       });
   }
 
-  removeItemFromCart(item: Product) {
+  removeItemFromCart(item: CartedItem) {
     this.cartService.removeItemFromCart(item.id);
   }
 
