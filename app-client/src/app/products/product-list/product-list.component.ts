@@ -8,7 +8,6 @@ import { ProductService } from './../product.service';
   styleUrls: ['./product-list.component.scss'],
 })
 export class ProductListComponent {
-  selectedItemsCount: number = 0;
   products$ = this.productService.getAllProducts();
 
   constructor(private productService: ProductService, private router: Router) {}

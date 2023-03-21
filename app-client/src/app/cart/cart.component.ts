@@ -4,8 +4,10 @@ import { take } from 'rxjs/operators';
 import { ApiPaths } from '../enums/api-paths';
 import { CartAction } from '../enums/card-action';
 import { CartedItem } from '../model/CartedItem';
-import { Product } from '../model/Product';
 import { CartService } from './cart.service';
+import { LocalStorageService } from '../local-storage.service';
+import { SelectedItem } from '../model/SelectedItem';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-cart',
@@ -13,6 +15,7 @@ import { CartService } from './cart.service';
   styleUrls: ['./cart.component.scss'],
 })
 export class CartComponent {
+  
   quantity: number = 1;
   chosenCartItems$ = this.cartService.getChosenCartItems();
 
@@ -20,13 +23,23 @@ export class CartComponent {
 
   // add to card incrementing quantity by 1
   // notify updateCart func with increment type
-  incrementQuantity = (item: CartedItem) =>
-    this.quantity++ && this.updateCart(item, CartAction.Increment);
+  incrementQuantity = (item: CartedItem) => {
+    console.log('item: ', item);
+    this.quantity++;
+    this.updateCart(item, CartAction.Increment);
+
+    // notify quantity count observer for header cart update
+    this.cartService.updateQuantityCount(CartAction.Increment);
+  };
 
   // decrement item quantity from card
   // notify updateCart func with increment type
-  decrementQuantity = (item: CartedItem) =>
+  decrementQuantity = (item: CartedItem) => {
     this.updateCart(item, CartAction.Decrement);
+
+    // notify quantity count observer for header cart update
+    this.cartService.updateQuantityCount(CartAction.Decrement);
+  };
 
   updateCart(item: CartedItem, type: CartAction) {
     this.cartService
