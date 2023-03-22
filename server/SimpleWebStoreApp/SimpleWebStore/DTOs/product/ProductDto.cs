@@ -1,6 +1,6 @@
 ﻿namespace SimpleWebStore.DTOs.product;
 
-public class ProductDto
+internal class ProductDto
 {
     public int Id { get; set; }
     public string Name { get; set; } = null!;
@@ -8,5 +8,5 @@ public class ProductDto
     public decimal Price { get; set; }
     public string ImageSrc { get; set; } = null!;
     public int Quantity { get; set; }
-    public double Ratings { get; set; }
+    public float Ratings { get; set; }
 }

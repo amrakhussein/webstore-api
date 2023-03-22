@@ -29,7 +29,7 @@ internal static class CartRepository
         using var db = new ApplicationDbContext();
 
         var mockUserId = 1;
-        var MockedCustomer = db.Customers.FirstOrDefault(c => c.Id == mockUserId);
+        var mockedCustomer = db.Customers.FirstOrDefault(c => c.Id == mockUserId);
         // fetch productIds needed for product prices & handling product quantity in stock
         var productIds = customerCart.CartItems.Select(ci => ci.Id).ToList();
 
@@ -67,6 +67,7 @@ internal static class CartRepository
             db.Carts.Add(cart);
             await db.SaveChangesAsync();
         }
+
         return productUpdated;
     }
 }

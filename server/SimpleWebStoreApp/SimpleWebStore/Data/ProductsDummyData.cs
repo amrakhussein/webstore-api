@@ -36,11 +36,11 @@ public class ProductsDummyData
             return prices;
         }
     }
-    public static double[] AverageRatings
+    public static float[] AverageRatings
     {
         get
         {
-            double[] averageRatings = { 2.2, 3.5, 4.1, 4.9, 3.2 };
+            float[] averageRatings = { 2.2f, 3.5f, 4.1f, 4.9f, 3.2f };
             return averageRatings;
         }
     }

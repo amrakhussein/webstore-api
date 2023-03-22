@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
 
 using SimpleWebStore.Data;
 using SimpleWebStore.DTOs.customerCart;
+using SimpleWebStore.DTOs.product;
 using SimpleWebStore.Models;
 
 namespace SimpleWebStore.Repositories;
@@ -14,10 +16,16 @@ internal static class ProductRepository
         return await db.Products.ToListAsync();
     }
 
-    internal async static Task<IEnumerable<Product>> GetProductsByIdAsync(int id)
+    internal async static Task<Product> GetProductByIdAsync(int id)
     {
         using var db = new ApplicationDbContext();
-        return await db.Products.Where(p => p.Id == id).ToListAsync();
+        return await db.Products.FirstOrDefaultAsync(p => p.Id == id);
+    }
+
+    internal static Product GetProductById(int id)
+    {
+        using var db = new ApplicationDbContext();
+        return db.Products.FirstOrDefault(p => p.Id == id);
     }
 
     internal async static Task<Dictionary<int, decimal>> GetProductPricesAsync(IEnumerable<int> productIds)
@@ -81,4 +89,45 @@ internal static class ProductRepository
         return (true, "Your Order has confirmed successfully");
     }
 
+    internal async static Task<bool> AddRating(int productId, RatingDto ratingDto)
+    {
+        try
+        {
+            using var db = new ApplicationDbContext();
+
+            var product = GetProductByIdAsync(productId);
+
+            // to be replace by real user id
+            var mockUserId = 1;
+            var mockedCustomer = db.Customers.FirstOrDefaultAsync(c => c.Id == mockUserId);
+
+            var rating = new Rating
+            {
+                ProductId = productId,
+                Customer = mockedCustomer.Result,
+                Stars = ratingDto.Stars,
+                Review = ratingDto.Review,
+            };
+
+            // update database ratings records
+            await db.Ratings.AddAsync(rating);
+
+            // update the product's average rating
+            var ratings = await db.Ratings.Where(r => r.ProductId == productId).ToListAsync();
+
+            product.Result.AverageRatings = (float)ratings.Average(r => r.Stars);
+
+            // ensure ef core tracking products new value
+            db.Products.Update(product.Result);
+
+            // update database
+            await db.SaveChangesAsync();
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }

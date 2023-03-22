@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
-using SimpleWebStore.DTOs;
+using SimpleWebStore.DTOs.customerCart;
+using SimpleWebStore.DTOs.product;
 using SimpleWebStore.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,15 +43,31 @@ app.UseCors("CORSPolicy");
 app.MapGet("/products", async () =>
 {
     var products = await ProductRepository.GetProductsAsync();
+    if (products is null)
+    {
+        return Results.BadRequest();
+    }
 
-    return products is not null ? Results.Ok(products)
+    //var testRating = products.Select(p => p.Ratings)
+
+    var productDtos = products.Select(p => new ProductDto
+    {
+        Id = p.Id,
+        Name = p.Name,
+        Description = p.Description,
+        ImageSrc = p.ImageSrc,
+        Quantity = p.Quantity,
+        Price = p.Price,
+        Ratings = p.AverageRatings
+    }).ToList();
+
+    return productDtos is not null ? Results.Ok(productDtos)
                             : Results.BadRequest();
 
 }).WithTags("Products Endpoint");
 
 
-
-app.MapPost("/purchase", async ([FromBody] CartDto customerCart) =>
+app.MapPost("/product/purchases", async ([FromBody] CartDto customerCart) =>
 {
     if (customerCart is null)
     {
@@ -72,6 +89,23 @@ app.MapPost("/purchase", async ([FromBody] CartDto customerCart) =>
             Message = purchasedItems.message,
         });
 }).WithTags("Purchase Endpoint");
+
+
+app.MapPost("/products/{productId:int}/ratings", async ([FromRoute] int productId, [FromBody] RatingDto rating) =>
+{
+    var result = await ProductRepository.AddRating(productId, rating);
+
+    return result ? Results.Ok() : Results.BadRequest();
+}).WithTags("Ratings Endpoing");
+
+
+app.MapPost("/products/{productId:int}", async ([FromRoute] int productId) =>
+{
+    var product = await ProductRepository.GetProductByIdAsync(productId);
+    return Results.Ok(product);
+
+
+}).WithTags("Ratings Endpoing");
 
 
 // start bootstraping
