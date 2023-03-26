@@ -95,16 +95,16 @@ internal static class ProductRepository
         {
             using var db = new ApplicationDbContext();
 
-            var product = GetProductByIdAsync(productId);
+            var product = await GetProductByIdAsync(productId);
 
             // to be replace by real user id
             var mockUserId = 1;
-            var mockedCustomer = db.Customers.FirstOrDefaultAsync(c => c.Id == mockUserId);
+            var mockedCustomer = await db.Customers.FirstOrDefaultAsync(c => c.Id == mockUserId);
 
             var rating = new Rating
             {
                 ProductId = productId,
-                Customer = mockedCustomer.Result,
+                Customer = mockedCustomer,
                 Stars = ratingDto.Stars,
                 Review = ratingDto.Review,
             };
@@ -112,13 +112,13 @@ internal static class ProductRepository
             // update database ratings records
             await db.Ratings.AddAsync(rating);
 
-            // update the product's average rating
             var ratings = await db.Ratings.Where(r => r.ProductId == productId).ToListAsync();
 
-            product.Result.AverageRatings = (float)ratings.Average(r => r.Stars);
+            // update the product's average rating
+            product.AverageRatings = (ratings.Count is 0) ? 0 : (float)ratings.Average(r => r.Stars);
 
             // ensure ef core tracking products new value
-            db.Products.Update(product.Result);
+            db.Products.Update(product);
 
             // update database
             await db.SaveChangesAsync();

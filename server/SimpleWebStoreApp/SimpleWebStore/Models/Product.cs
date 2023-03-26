@@ -10,7 +10,7 @@ internal sealed class Product
 
     // quantity per unit defaulted with 50 for testing
     public int Quantity { get; set; } = 500;
-    public double AverageRatings { get; set; }
+    public float AverageRatings { get; set; }
 
     public IEnumerable<CartItem> Items { get; set; } = null!;
     public IEnumerable<Rating> Ratings { get; set; } = null!;
