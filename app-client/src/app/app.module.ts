@@ -11,6 +11,7 @@ import { ProductListComponent } from './products/product-list/product-list.compo
 import { ProductsModule } from './products/products.module';
 import { CartComponent } from './cart/cart.component';
 import { CheckoutComponent } from './checkout/checkout.component';
+import { ProductDetailsComponent } from './products/product-details/product-details.component';
 
 
 @NgModule({
@@ -21,6 +22,7 @@ import { CheckoutComponent } from './checkout/checkout.component';
     ContainerComponent,
     CartComponent,
     CheckoutComponent,
+    ProductDetailsComponent,
   ],
   imports: [
     BrowserModule,
