@@ -1,4 +1,6 @@
-﻿namespace SimpleWebStore.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SimpleWebStore.Models;
 
 internal sealed class Rating
 {
@@ -16,6 +18,7 @@ internal sealed class Rating
         }
     }
 
+    [Required, StringLength(256)]
     public string? Review { get; set; } = null!;
 
     public int ProductId { get; set; }

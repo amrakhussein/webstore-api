@@ -1,6 +1,6 @@
 ﻿namespace SimpleWebStore.Models;
 
-internal sealed class Cart
+internal sealed class Order
 {
     public int Id { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -8,5 +8,6 @@ internal sealed class Cart
 
     public int CustomerId { get; set; }
     public Customer Customer { get; set; } = null!;
-    public IEnumerable<CartItem> Items { get; set; } = null!;
+
+    public ICollection<OrderItem> Items { get; set; } = null!;
 }
