@@ -14,6 +14,8 @@ import { UpdatedProductsResponse } from '../model/UpdatedProductsResponse';
   styleUrls: ['./checkout.component.scss'],
 })
 export class CheckoutComponent {
+  successStatus: boolean = false;
+
   cartPayload: CartPayload = {
     customerId: 1, // to be replaced by real user ID
     cartItems: [],
@@ -60,6 +62,7 @@ export class CheckoutComponent {
       )
       .subscribe((res) => {
         if (res.success) {
+          this.successStatus = true;
           console.log('Checkout successful:', res.message);
           this.purchaseActionResponse = res.message;
 

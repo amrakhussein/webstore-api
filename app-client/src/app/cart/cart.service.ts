@@ -37,25 +37,25 @@ export class CartService {
     private productService: ProductService,
     private localStore: LocalStorageService
   ) {
-       // local storage Init
-       const localItemsData = this.localStore.getData(this.cartItemsKey);
+    // local storage Init
+    const localItemsData = this.localStore.getData(this.cartItemsKey);
 
-       if (localItemsData) {
-         // allSelectedQuantity
-         const selectedStorageCartItems = JSON.parse(
-           localItemsData
-         ) as SelectedItem[];
-         this.selectedCartItems = selectedStorageCartItems;
-         this.selectedCartItems$.next(selectedStorageCartItems);
-         this.allSelectedQuantity = selectedStorageCartItems.reduce(
-           (acc, curr) => acc + curr.quantity,
-           0
-         );
-         localStore.saveData(
-           this.selectedItemsCountKey,
-           this.allSelectedQuantity.toString()
-         );
-       }
+    if (localItemsData) {
+      // allSelectedQuantity
+      const selectedStorageCartItems = JSON.parse(
+        localItemsData
+      ) as SelectedItem[];
+      this.selectedCartItems = selectedStorageCartItems;
+      this.selectedCartItems$.next(selectedStorageCartItems);
+      this.allSelectedQuantity = selectedStorageCartItems.reduce(
+        (acc, curr) => acc + curr.quantity,
+        0
+      );
+      localStore.saveData(
+        this.selectedItemsCountKey,
+        this.allSelectedQuantity.toString()
+      );
+    }
 
     // quantity - local storage sync
     const selectedItemsCount = Number(
@@ -164,27 +164,36 @@ export class CartService {
       this.allSelectedQuantity = this.selectedCartItems.reduce(
         (acc, curr) => acc + curr.quantity,
         0
-        );
-        this.selectedItemsCount.next(this.allSelectedQuantity);
+      );
+      this.selectedItemsCount.next(this.allSelectedQuantity);
 
-        // subscribe to changes of user selected products & update local storage
-        this.selectedCartItems$.next(this.selectedCartItems);
+      // subscribe to changes of user selected products & update local storage
+      this.selectedCartItems$.next(this.selectedCartItems);
       this.selectedCartItems$.subscribe((items) => {
         // sync carted items with local storage
         localStorage.setItem(this.cartItemsKey, JSON.stringify(items));
-          // sync quantity with local storage
-          this.localStore.saveData(
-            this.selectedItemsCountKey,
-            this.allSelectedQuantity.toString()
-            );
+        // sync quantity with local storage
+        this.localStore.saveData(
+          this.selectedItemsCountKey,
+          this.allSelectedQuantity.toString()
+        );
       });
     }
   }
 
- public clearCart = () => {
-    this.selectedCartItems$.next([]);
+  public clearCart = () => {
+    // ensure resetting quantity value
+    const selectedCartItems = this.selectedCartItems.map((item) => ({
+      ...item,
+      quantity: 0,
+    }));
+    this.selectedCartItems$.next(selectedCartItems);
+
+    // clear local storage
     this.localStore.deleteData(this.cartItemsKey);
     this.localStore.deleteData(this.selectedItemsCountKey);
+
+    // count reset
     this.selectedItemsCount.next(0);
   };
 }

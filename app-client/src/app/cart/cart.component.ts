@@ -5,9 +5,6 @@ import { ApiPaths } from '../enums/api-paths';
 import { CartAction } from '../enums/card-action';
 import { CartedItem } from '../model/CartedItem';
 import { CartService } from './cart.service';
-import { LocalStorageService } from '../local-storage.service';
-import { SelectedItem } from '../model/SelectedItem';
-import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-cart',
@@ -15,7 +12,6 @@ import { BehaviorSubject } from 'rxjs';
   styleUrls: ['./cart.component.scss'],
 })
 export class CartComponent {
-  
   quantity: number = 1;
   chosenCartItems$ = this.cartService.getChosenCartItems();
 
@@ -63,6 +59,10 @@ export class CartComponent {
 
   // clear cart
   clearCart = () => this.cartService.clearCart();
+
+  // quantity count
+  getQuantityCount = (cartItems: CartedItem[]): number =>
+    cartItems.reduce((total, item) => total + item.quantity, 0);
 
   // handle user navigation
   toProductsPage = () => this.router.navigate([ApiPaths.Products]);
