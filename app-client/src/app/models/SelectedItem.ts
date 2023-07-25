@@ -1,6 +1,4 @@
-import { Product } from './Product';
-
-export interface SelectedItem extends Product {
+export interface SelectedItem {
   id: number;
   quantity: number;
 }

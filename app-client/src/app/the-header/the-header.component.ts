@@ -9,6 +9,6 @@ import { CartService } from '../cart/cart.service';
 })
 export class TheHeaderComponent {
   selectedItemsCount$: Observable<number> =
-    this.cartService.selectedItemsCount$;
+    this.cartService.getSelectedItemsCount$;
   constructor(private cartService: CartService) {}
 }

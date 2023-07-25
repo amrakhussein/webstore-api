@@ -8,11 +8,11 @@ namespace SimpleWebStore.Repositories;
 
 internal static class CartRepository
 {
-    internal async static Task<Cart> GetCartByIdAsync(int cartId)
+    internal async static Task<Order> GetCartByIdAsync(int cartId)
     {
         using var db = new ApplicationDbContext();
 
-        return await db.Carts
+        return await db.Orders
             .Include(c => c.Items)
             .ThenInclude(ci => ci.Product)
             .FirstOrDefaultAsync(c => c.Id == cartId);
@@ -28,8 +28,6 @@ internal static class CartRepository
         // fetch user record from database
         using var db = new ApplicationDbContext();
 
-        var mockUserId = 1;
-        var mockedCustomer = db.Customers.FirstOrDefault(c => c.Id == mockUserId);
         // fetch productIds needed for product prices & handling product quantity in stock
         var productIds = customerCart.CartItems.Select(ci => ci.Id).ToList();
 
@@ -45,10 +43,10 @@ internal static class CartRepository
         customerCart.CartItems = cartItemsDto;
 
         // create customer Order (Cart) updating the cart items ready for the database schema
-        var cart = new Cart
+        var cart = new Order
         {
-            CustomerId = mockUserId,
-            Items = cartItemsDto.Select(ci => new CartItem
+            CustomerId = customerCart.CustomerId,
+            Items = cartItemsDto.Select(ci => new OrderItem
             {
                 ProductId = ci.Id,
                 Price = ci.Price,
@@ -64,7 +62,7 @@ internal static class CartRepository
         if (productUpdated.success)
         {
             // update database with customer Order
-            db.Carts.Add(cart);
+            db.Orders.Add(cart);
             await db.SaveChangesAsync();
         }
 
